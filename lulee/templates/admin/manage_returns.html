@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Manage Return Requests - LUELEE Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #555;
+            transition: 0.3s;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #444;
+            margin: 20px 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            font-size: 20px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .step-links {
+            display: inline-flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .step-links a {
+            padding: 8px 16px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .step-links a:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .current {
+            padding: 8px 16px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .return-reasons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reason-tag {
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }/* Add this to your existing CSS styles */
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    padding: 15px 0;
+    border-bottom: 1px solid #444;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+/* Add this span for the 'clothing' text */
+.sidebar h2 span {
+    display: block;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #888;
+    font-weight: 400;
+    margin-top: 5px;
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}"class="active" >Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}">Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <h1>Return Request Management</h1>
+
+            <!-- Pending Returns Section -->
+            <h2><i class="fas fa-clock"></i> Pending Returns</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order Item ID</th>
+                            <th>Reason</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for return_request in pending_returns %}
+                        <tr>
+                            <td>#{{ return_request.order_item.id }}</td>
+                            <td>
+                                <div class="return-reasons">
+                                    {% if return_request.sizing_issues %}<span class="reason-tag">Sizing Issues</span>{% endif %}
+                                    {% if return_request.damaged_item %}<span class="reason-tag">Damaged Item</span>{% endif %}
+                                    {% if return_request.incorrect_order %}<span class="reason-tag">Incorrect Order</span>{% endif %}
+                                    {% if return_request.delivery_delays %}<span class="reason-tag">Delivery Delays</span>{% endif %}
+                                    {% if return_request.other_reason %}<span class="reason-tag">Other: {{ return_request.other_reason }}</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>{{ return_request.created_at|date:"M d, Y H:i" }}</td>
+                            <td><span class="reason-tag">Pending</span></td>
+                            <td>
+                                <form method="POST" action="{% url 'approve_return_item' return_request.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-message">No pending return requests found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if pending_returns.has_other_pages %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if pending_returns.has_previous %}
+                        <a href="?pending_page=1"><i class="fas fa-angle-double-left"></i> First</a>
+                        <a href="?pending_page={{ pending_returns.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ pending_returns.number }} of {{ pending_returns.paginator.num_pages }}
+                    </span>
+
+                    {% if pending_returns.has_next %}
+                        <a href="?pending_page={{ pending_returns.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
+                        <a href="?pending_page={{ pending_returns.paginator.num_pages }}">Last <i class="fas fa-angle-double-right"></i></a>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+
+            <!-- Approved Returns Section -->
+            <h2><i class="fas fa-check-circle"></i> Approved Returns</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order Item ID</th>
+                            <th>Reason</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for return_request in approved_returns %}
+                        <tr>
+                            <td>#{{ return_request.order_item.id }}</td>
+                            <td>
+                                <div class="return-reasons">
+                                    {% if return_request.sizing_issues %}<span class="reason-tag">Sizing Issues</span>{% endif %}
+                                    {% if return_request.damaged_item %}<span class="reason-tag">Damaged Item</span>{% endif %}
+                                    {% if return_request.incorrect_order %}<span class="reason-tag">Incorrect Order</span>{% endif %}
+                                    {% if return_request.delivery_delays %}<span class="reason-tag">Delivery Delays</span>{% endif %}
+                                    {% if return_request.other_reason %}<span class="reason-tag">Other: {{ return_request.other_reason }}</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>{{ return_request.created_at|date:"M d, Y H:i" }}</td>
+                            <td><span class="reason-tag">Approved</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-message">No approved return requests found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if approved_returns.has_other_pages %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if approved_returns.has_previous %}
+                        <a href="?approved_page=1"><i class="fas fa-angle-double-left"></i> First</a>
+                        <a href="?approved_page={{ approved_returns.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ approved_returns.number }} of {{ approved_returns.paginator.num_pages }}
+                    </span>
+
+                    {% if approved_returns.has_next %}
+                        <a href="?approved_page={{ approved_returns.next_page_number }}">Next <i class="fas fa-angle-right"></i></a>
+                        <a href="?approved_page={{ approved_returns.paginator.num_pages }}">Last <i class="fas fa-angle-double-right"></i></a>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        Toastify({
+            text: "{{ message }}",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "{% if message.tags == 'error' %}red{% else %}green{% endif %}",
+        }).showToast();
+        {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>

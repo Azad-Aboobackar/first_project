@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #555;
+            transition: 0.3s;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #444;
+            margin: 20px 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        /* Form Section */
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container select {
+            width: 45%;
+            display: inline-block;
+        }
+
+        .form-container .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-container .image-preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .form-container .image-preview input {
+            width: 100%;
+        }
+
+        .form-container button {
+            padding: 12px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container button:hover {
+            background-color: #555;
+        }
+        /* General form styling */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Specific styling for the description field */
+.description-field {
+    min-height: 120px; /* Ensures the field has a decent size */
+    resize: vertical; /* Allows the user to resize only vertically */
+    font-family: Arial, sans-serif; /* Ensure consistent font styling */
+}
+
+/* Placeholder styling */
+.form-control::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Error styling (if needed) */
+.form-control.error {
+    border-color: #e3342f;
+    background-color: #fbeaea;
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}" ></i>Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}"class="active">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}">Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}"></i>Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Edit Product</h1>
+            <p>Modify product details and images.</p>
+        </header>
+
+        <div class="form-container">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h2>Edit Product</h2>
+    
+                <label for="name">Product Name:</label>
+                <input type="text" name="name" value="{{ product.name }}" required>
+    
+                <label for="price">Price:</label>
+                <input type="number" name="price" value="{{ product.variants.first.price }}" step="0.01" required>
+    
+
+                <label for="stock">Stock Quantity:</label>
+                <input type="number" name="stock" id="stock" value="{{ stock_quantity }}" required>
+            
+            
+    
+                <label for="category">Category:</label>
+                <select name="category" required>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id == product.category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                
+                <div class="form-group">
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea 
+                        name="description" 
+                        id="description" 
+                        class="form-control description-field" 
+                        rows="4" 
+                        placeholder="Edit product description" 
+                        required>{{ product.description }}</textarea>
+                </div>
+                
+                <!-- Variants -->
+                <div class="form-container">
+                    <h5>Size:{{size}}</h5><h5>color:{{color}}</h5>
+                    <label for="size">Size:</label>
+                    <select name="size" required>
+                        <option value="S" {% if variant and variant.size == 'S' %}selected{% endif %}>Small</option>
+                        <option value="M" {% if variant and variant.size == 'M' %}selected{% endif %}>Medium</option>
+                        <option value="L" {% if variant and variant.size == 'L' %}selected{% endif %}>Large</option>
+                        <option value="XL" {% if variant and variant.size == 'XL' %}selected{% endif %}>Extra Large</option>
+                    </select>
+                
+                    <label for="color">Color:</label>
+                    <select name="color" required>
+                        <option value="Red" {% if variant and variant.color == 'Red' %}selected{% endif %}>Red</option>
+                        <option value="Blue" {% if variant and variant.color == 'Blue' %}selected{% endif %}>Blue</option>
+                        <option value="Green" {% if variant and variant.color == 'Green' %}selected{% endif %}>Green</option>
+                        <option value="White" {% if variant and variant.color == 'White' %}selected{% endif %}>White</option>
+                        <option value="Black" {% if variant and variant.color == 'Black' %}selected{% endif %}>Black</option>
+                        <option value="Yellow" {% if variant and variant.color == 'Yellow' %}selected{% endif %}>Yellow</option>
+                        <option value="Orange" {% if variant and variant.color == 'Orange' %}selected{% endif %}>Orange</option>
+                        <option value="Purple" {% if variant and variant.color == 'Purple' %}selected{% endif %}>Purple</option>
+                        <option value="Pink" {% if variant and variant.color == 'Pink' %}selected{% endif %}>Pink</option>
+                        <option value="Brown" {% if variant and variant.color == 'Brown' %}selected{% endif %}>Brown</option>
+                        <option value="Gray" {% if variant and variant.color == 'Gray' %}selected{% endif %}>Gray</option>
+                        <option value="Cyan" {% if variant and variant.color == 'Cyan' %}selected{% endif %}>Cyan</option>
+                        <option value="Magenta" {% if variant and variant.color == 'Magenta' %}selected{% endif %}>Magenta</option>
+                        <option value="Teal" {% if variant and variant.color == 'Teal' %}selected{% endif %}>Teal</option>
+                        <option value="Gold" {% if variant and variant.color == 'Gold' %}selected{% endif %}>Gold</option>
+                        <option value="Silver" {% if variant and variant.color == 'Silver' %}selected{% endif %}>Silver</option>
+                        <option value="Beige" {% if variant and variant.color == 'Beige' %}selected{% endif %}>Beige</option>
+                        <option value="Maroon" {% if variant and variant.color == 'Maroon' %}selected{% endif %}>Maroon</option>
+                        <option value="Olive" {% if variant and variant.color == 'Olive' %}selected{% endif %}>Olive</option>
+                        <option value="Lavender" {% if variant and variant.color == 'Lavender' %}selected{% endif %}>Lavender</option>
+                        <option value="Navy" {% if variant and variant.color == 'Navy' %}selected{% endif %}>Navy</option>
+                        <option value="Turquoise" {% if variant and variant.color == 'Turquoise' %}selected{% endif %}>Turquoise</option>
+                        <option value="Coral" {% if variant and variant.color == 'Coral' %}selected{% endif %}>Coral</option>
+                        <option value="Indigo" {% if variant and variant.color == 'Indigo' %}selected{% endif %}>Indigo</option>
+                        <option value="Chocolate" {% if variant and variant.color == 'Chocolate' %}selected{% endif %}>Chocolate</option>
+                        <option value="Peach" {% if variant and variant.color == 'Peach' %}selected{% endif %}>Peach</option>
+                        <option value="Mint" {% if variant and variant.color == 'Mint' %}selected{% endif %}>Mint</option>
+                        <option value="Lilac" {% if variant and variant.color == 'Lilac' %}selected{% endif %}>Lilac</option>
+                        <option value="Cream" {% if variant and variant.color == 'Cream' %}selected{% endif %}>Cream</option>
+                        <option value="Charcoal" {% if variant and variant.color == 'Charcoal' %}selected{% endif %}>Charcoal</option>
+                        
+                    </select>
+                </div>
+                
+    
+                <h3>Product Images</h3>
+                <div class="image-grid">
+                    {% for image in existing_images %}
+                        <div class="image-preview">
+                            <img src="{{ image.image_url }}" alt="Product Image">
+                            <label for="image-{{ forloop.counter }}">Replace Image {{ forloop.counter }}:</label>
+                            <input type="file" name="image-{{ forloop.counter }}">
+                        </div>
+                    {% endfor %}
+                </div>
+    
+                <!-- Additional Image Upload Fields -->
+                {% for i in range_list %}
+                    <label for="image-{{ existing_images|length|add:i }}">Add Image {{ existing_images|length|add:i }}:</label>
+                    <input type="file" name="image-{{ existing_images|length|add:i }}">
+                {% endfor %}
+    
+                <button type="submit">Update Product</button>
+            </form>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</body>
+</html>

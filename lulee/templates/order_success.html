@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - LUELEE Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .success-icon i {
+            color: white;
+            font-size: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .order-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .order-details h2 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .next-steps {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f1f8ff;
+            border-radius: 8px;
+        }
+
+        .next-steps h2 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .next-steps ul {
+            list-style: none;
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .next-steps li i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .primary-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #45a049;
+        }
+
+        .secondary-button {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #dee2e6;
+        }
+
+        .secondary-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .shipping-address {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+
+            .success-card {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1>Thank You for Your Order!</h1>
+            <p>Your order has been successfully placed and will be processed soon.</p>
+            
+            <div class="order-details">
+                <h2>Order Summary</h2>
+                <div class="detail-row">
+                    <span>Order Number:</span>
+                    <strong>{{ order.order_no }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Order Date:</span>
+                    <strong>{{ order.order_date}}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Payment Method:</span>
+                    <strong>{{ order.payment }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Total Amount:</span>
+                    <strong>${{ order.total }}</strong>
+                </div>
+                
+                <h2 style="margin-top: 20px;">Shipping Address</h2>
+                <div class="shipping-address">
+                    <p>{{ order.shipping_address.name }}</p>
+                    <p>{{ order.shipping_address.street_address }}</p>
+                    <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.pin_code }}</p>
+                    <p>{{ order.shipping_address.country }}</p>
+                    <p>Phone: {{ order.shipping_address.phone_no }}</p>
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <h2>What's Next?</h2>
+                <ul>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        You will receive an order confirmation email shortly
+                    </li>
+                    <li>
+                        <i class="fas fa-box"></i>
+                        We will notify you when your order ships
+                    </li>
+                    <li>
+                        <i class="fas fa-truck"></i>
+                        Expected delivery: 2-7 business days
+                    </li>
+                </ul>
+            </div>
+
+            <div class="buttons">
+                <a href="{% url 'my_orders'%}" class="button primary-button">
+                    Track Order
+                </a>
+                <a href="{% url 'shop' %}" class="button secondary-button">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

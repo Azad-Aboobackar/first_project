@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Category</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #555;
+            transition: 0.3s;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #444;
+            margin: 20px 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        /* Form Section */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .container label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .container input,
+        .container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .container button {
+            padding: 10px 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}" ></i>Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}">Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}"class="active">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}"></i>Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Edit Category</h1>
+            <p>Update the category information below.</p>
+        </header>
+
+        <div class="container">
+            <h1>Edit Category</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ category.name }}" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required>{{ category.description }}</textarea>
+
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+</body>
+</html>

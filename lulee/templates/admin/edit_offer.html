@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Edit Offer - LUELEE Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #555;
+            transition: 0.3s;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #444;
+            margin: 20px 0;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select {
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #333;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #007bff;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}">Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}" class="active">Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <h1>Edit Offer</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" value="{{ offer.name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discount">Discount (%):</label>
+                    <input type="number" step="0.01" id="discount" name="discount" value="{{ offer.discount }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required>{{ offer.description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="offer_type">Type:</label>
+                    <select id="offer_type" name="offer_type" required onchange="updateOptions()">
+                        <option value="category" {% if offer.offer_type == "category" %}selected{% endif %}>Category</option>
+                        <option value="product" {% if offer.offer_type == "product" %}selected{% endif %}>Product</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="selected_id">Select:</label>
+                    <select id="selected_id" name="selected_id" required>
+                        <!-- Options populated dynamically via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ offer.end_date|date:'Y-m-d' }}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Offer
+                </button>
+            </form>
+            <a href="{% url 'offer_list' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Offer List
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const categories = JSON.parse('{{ categories|safe|escapejs }}');
+        const products = JSON.parse('{{ products|safe|escapejs }}');
+        const currentOfferType = '{{ offer.offer_type }}';
+        const currentOfferCategory = {{ offer_category_id|default:"null" }};
+        const currentOfferProduct = {{ offer_product_id|default:"null" }};
+
+        function updateOptions() {
+            const offerType = document.getElementById("offer_type").value;
+            const dropdown = document.getElementById("selected_id");
+            dropdown.innerHTML = "";
+
+            let options = [];
+            if (offerType === "category") {
+                options = categories;
+            } else if (offerType === "product") {
+                options = products;
+            }
+
+            options.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.pk;
+                option.textContent = item.fields.name || item.fields.case_color;
+                if (offerType === "category" && item.pk == currentOfferCategory) {
+                    option.selected = true;
+                }
+                if (offerType === "product" && item.pk == currentOfferProduct) {
+                    option.selected = true;
+                }
+                dropdown.appendChild(option);
+            });
+        }
+
+        // Initialize dropdown based on the current offer type
+        updateOptions();
+
+        {% if messages %}
+        {% for message in messages %}
+        Toastify({
+            text: "{{ message }}",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "{% if message.tags == 'error' %}red{% else %}green{% endif %}",
+        }).showToast();
+        {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>

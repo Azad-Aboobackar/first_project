@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 26px;
+            letter-spacing: 1.5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #34495e;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #7f8c8d;
+            margin: 20px 0;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styles */
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Messages Styles */
+        .alert-danger,
+        .alert-success {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .alert-danger {
+            background-color: #e74c3c;
+            color: #fff;
+            border: 1px solid #c0392b;
+        }
+
+        .alert-success {
+            background-color: #2ecc71;
+            color: #fff;
+            border: 1px solid #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}" ></i>Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}">Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}"class="active">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}"></i>Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Edit User: {{ user.first_name }} {{ user.last_name }}</h1>
+        </header>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" required>
+
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" value="{{ user.email }}" required>
+
+            <label for="phone_no">Phone No:</label>
+            <input type="text" name="phone_no" id="phone_no" value="{{ user.phone_no }}">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

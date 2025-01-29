@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Order Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #555;
+            transition: 0.3s;
+        }
+
+        .sidebar hr {
+            border: none;
+            height: 1px;
+            background-color: #444;
+            margin: 20px 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        /* Order Details Styles */
+        .order-details {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+
+        .order-details h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .order-info p {
+            margin-bottom: 5px;
+        }
+
+        .order-info strong {
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Form Styles */
+        .status-form {
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-form h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .status-form select {
+            width: 200px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        .status-form button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .status-form button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styles */
+        .order-items {
+            margin-top: 20px;
+        }
+
+        .order-items h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+
+        .order-items-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-items-table tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .back-link:hover {
+            background-color: #555;
+        }
+        .total {
+    text-align: center; /* Center align the entire container */
+    background-color: #f8f9fa; /* Light background for contrast */
+    padding: 10px; /* Add some spacing inside the container */
+    border: 1px solid #ddd; /* Optional: Add a subtle border */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 20px; /* Add space above the total section */
+}
+
+.total h3 {
+    font-size: 1.8em; /* Make the font size larger */
+    color: #060606; /* Set the font color (e.g., blue) */
+    font-weight: bold; /* Make the text bold */
+    text-transform: uppercase; /* Convert text to uppercase for emphasis */
+    margin: 0; /* Remove extra margins around the heading */
+}
+.alert {
+            padding: 12px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'product_management' %}">Products</a></li>
+            <li><a href="{% url 'admin_order_list' %}"class="active" >Order Lists</a></li>
+            <li><a href="{% url 'user_management' %}">Users</a></li>
+            <li><a href="{% url 'coupon_list' %}">Coupons</a></li>
+            <li><a href="{% url 'category_management' %}">Category</a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}">Offers</a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">Log out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <header>
+            <h1>Order Details</h1>
+            <p>View and manage order information</p>
+        </header>
+
+        <div class="order-details">
+            <h2>Order Information</h2>
+            <div class="order-info">
+                <p><strong>Order ID:</strong> {{ order.order_no }}</p>
+                <p><strong>User:</strong> {{ order.user.first_name }}</p>
+                <p><strong>Shipping Address:</strong> {{ order.shipping_address }}</p>
+                <p><strong>Status:</strong> {{ order.status }}</p>
+                <p><strong>Created At:</strong> {{ order.order_date }}</p>
+            </div>
+            <form class="status-form" method="post">
+                <h3>Edit Order Status</h3>
+                {% csrf_token %}
+                <select name="status" id="status">
+                    <option value="Pending" 
+                    {% if order.status == 'Pending' %}selected{% endif %}
+                    {% if order.status != 'Pending' %}disabled{% endif %}
+                    {% if order.status == 'Returned' %}disabled{% endif %}>
+
+                    Pending <!-- Enabled only when the current status is Pending -->
+                </option>
+                <option value="Shipped" 
+                    {% if order.status == 'Shipped' %}selected{% endif %}
+                    {% if order.status == 'Delivered' or order.status == 'Cancelled' %}disabled{% endif %}
+                    {% if order.status == 'Returned' %}disabled{% endif %}>
+
+                    Shipped <!-- Cannot change to Shipped if Delivered or Cancelled -->
+                </option>
+                <option value="Delivered" 
+                    {% if order.status == 'Delivered' %}selected{% endif %}
+                    {% if order.status == 'Cancelled' %}disabled{% endif %}
+                    {% if order.status == 'Returned' %}disabled{% endif %}>
+                    Delivered <!-- Cannot change to Delivered if Cancelled -->
+                </option>
+                <option value="Cancelled" 
+                    {% if order.status == 'Cancelled' %}selected{% endif %}
+                    {% if order.status == 'Delivered' %}disabled{% endif %}
+                    {% if order.status == 'Returned' %}disabled{% endif %}>
+
+                    Cancelled <!-- Cannot change to Cancelled if Delivered -->
+                </option>
+                <option value="Returned" 
+                {% if order.status == 'Returned' %}selected{% endif %}>
+               Returned <!-- Cannot change to Cancelled if Delivered -->
+            </option>
+                
+                </select>
+                
+                <button type="submit">Update Status</button>
+            </form>
+            
+
+            <div class="order-items">
+                <h3>Order Items:</h3>
+                <table class="order-items-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Image</th>
+                            <th>Quantity</th>
+                            <th>Items Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order_items%}
+                        <tr>
+                            <td>{{ item.product_variant }}</td>
+                            <td>
+                                <img src="{{ item.product_variant.images.first.image_url }}" alt="{{ item.product_variant.product.name }}" class="product-image">
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.total_amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="total"><h3>TOTAl AMOUNT : {{order.total}}</h3></div>
+        </div>
+
+
+    </div>
+</body>
+</html>
+

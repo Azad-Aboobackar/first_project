@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report - LUELEE Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Keep all your existing CSS styles -->
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #f1c40f;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * {
+             margin: 0;
+             padding: 0;
+             box-sizing: border-box;
+             font-family: Arial, sans-serif;
+         }
+ 
+         body {
+             display: flex;
+             min-height: 100vh;
+             background-color: #f4f4f4;
+         }
+ 
+         /* Sidebar Styles */
+         .sidebar {
+             width: 220px;
+             background-color: #333;
+             color: white;
+             padding: 20px 10px;
+             display: flex;
+             flex-direction: column;
+         }
+ 
+         .sidebar h2 {
+             text-align: center;
+             margin-bottom: 20px;
+             font-size: 24px;
+             letter-spacing: 2px;
+         }
+ 
+         .sidebar ul {
+             list-style: none;
+         }
+ 
+         .sidebar ul li {
+             margin: 15px 0;
+         }
+ 
+         .sidebar ul li a {
+             color: white;
+             text-decoration: none;
+             font-size: 16px;
+             display: block;
+             padding: 8px 12px;
+             border-radius: 5px;
+         }
+ 
+         .sidebar ul li a:hover,
+         .sidebar ul li a.active {
+             background-color: #555;
+             transition: 0.3s;
+         }
+ 
+         .sidebar hr {
+             border: none;
+             height: 1px;
+             background-color: #444;
+             margin: 20px 0;
+         }
+ 
+ 
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+ 
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+ 
+        h1 {
+            color: var(--dark);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+ 
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+ 
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+        }
+ 
+        .card:nth-child(2)::before { background: var(--secondary); }
+        .card:nth-child(3)::before { background: var(--accent); }
+        .card:nth-child(4)::before { background: var(--danger); }
+ 
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+ 
+        .card p {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+ 
+        .card p i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+ 
+        .filter-form {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+ 
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+ 
+        .form-row label {
+            min-width: 120px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+ 
+        .form-row select,
+        .form-row input[type="date"] {
+            flex: 1;
+            max-width: 250px;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+ 
+        .form-row select:focus,
+        .form-row input[type="date"]:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+ 
+        .submit-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+ 
+        .submit-row input[type="submit"] {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+ 
+        .submit-row input[type="submit"]:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+ 
+        .charts-container {
+            display: grid;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+ 
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+ 
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .chart-card h3 {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+ 
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+ 
+        .chart-filters select {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+ 
+        .chart-filters select:hover {
+            border-color: var(--primary);
+        }
+ 
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+ 
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+        }
+ 
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+ 
+        td {
+            border-top: 1px solid #eee;
+            transition: var(--transition);
+        }
+ 
+        tr:hover td {
+            background: #f8f9fa;
+        }
+ 
+        .table-section {
+            margin-top: 2rem;
+        }
+ 
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+ 
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+ 
+        .button:hover {
+            background: var(--dark);
+            transform: translateY(-2px);
+        }
+ 
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                padding: 1rem;
+                z-index: 1000;
+            }
+ 
+            .main-content {
+                margin-bottom: 80px;
+            }
+ 
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+ 
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+ 
+            .form-row label {
+                min-width: auto;
+            }
+ 
+            .form-row select,
+            .form-row input[type="date"] {
+                max-width: 100%;
+            }
+ 
+            .card p {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+ 
+ 
+</head>
+<body>
+    <div class="sidebar">
+        <h2>LUE LEE</h2>
+        <ul>
+            <li><a href="{% url 'admin_dashboard' %}" class="active">
+                Dashboard
+            </a></li>
+            <li><a href="{% url 'product_management' %}">
+                Products
+            </a></li>
+            <li><a href="{% url 'admin_order_list' %}">
+                Orders
+            </a></li>
+            <li><a href="{% url 'user_management' %}">
+                Users
+            </a></li>
+            <li><a href="{% url 'coupon_list' %}">
+                Coupons
+            </a></li>
+            <li><a href="{% url 'category_management' %}">
+                Categories
+            </a></li>
+            <li><a href="{% url 'banner_management'%}">Banners</a></li>
+            <li><a href="{% url 'offer_list' %}">
+                Offers
+            </a></li>
+            <hr>
+            <li><a href="{% url 'admin_logout' %}">
+                Logout
+            </a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1><i class="fas fa-chart-bar"></i> Sales Report</h1>
+
+            <form method="get" class="filter-form" id="filterForm">
+                <div class="form-row">
+                    <label>Date Range:</label>
+                    <select name="date_filter" id="date_filter">
+                        <option value="day" {% if date_filter == 'day' %}selected{% endif %}>Today</option>
+                        <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Last 30 Days</option>
+                        <option value="custom" {% if date_filter == 'custom' %}selected{% endif %}>Custom Range</option>
+                    </select>
+                </div>
+
+                <div id="custom-dates" {% if date_filter != 'custom' %}style="display: none;"{% endif %}>
+                    <div class="form-row">
+                        <label>Start Date:</label>
+                        <input type="date" name="start_date" id="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                    </div>
+                    <div class="form-row">
+                        <label>End Date:</label>
+                        <input type="date" name="end_date" id="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+
+                <div class="submit-row">
+                    <input type="submit" value="Apply Filter">
+                </div>
+            </form>
+
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Orders</h3>
+                    <p><i class="fas fa-shopping-cart"></i>{{ summary.total_orders }}</p>
+                </div>
+                <div class="card">
+                    <h3>Total Revenue</h3>
+                    <p><i class="fas fa-rupee-sign"></i>{{ summary.total_amount|floatformat:2 }}</p>
+                </div>
+                <div class="card">
+                    <h3>Items Sold</h3>
+                    <p><i class="fas fa-box"></i>{{ summary.total_items }}</p>
+                </div>
+                <div class="card">
+                    <h3>Total Discount</h3>
+                    <p><i class="fas fa-tags"></i>₹{{ total_discount|floatformat:2 }}</p>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Sales Overview</h3>
+                    <div style="height: 400px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <h3>Top Products</h3>
+                        <div style="height: 350px;">
+                            <canvas id="productsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Category Distribution</h3>
+                        <div style="height: 350px;">
+                            <canvas id="categoriesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="export-buttons">
+                    <a href="?{{ request.GET.urlencode }}&export=excel" class="button">
+                        <i class="fas fa-file-excel"></i> Export to Excel
+                    </a>
+                    <a href="?{{ request.GET.urlencode }}&export=pdf" class="button">
+                        <i class="fas fa-file-pdf"></i> Export to PDF
+                    </a>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total Amount</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.order_no }}</td>
+                            <td>{{ order.order_date|date:"Y-m-d" }}</td>
+                            <td>{{ order.user.email }}</td>
+                            <td>{{ order.order_items.count }}</td>
+                            <td>₹{{ order.total|floatformat:2 }}</td>
+                            <td>₹{{ order.calculated_discount|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No orders found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    function initCharts() {
+        try {
+            // Parse data with error handling
+            const salesData = JSON.parse('{{ sales_data_json|safe }}' || '[]');
+            const productsData = JSON.parse('{{ products_data_json|safe }}' || '[]');
+            const categoriesData = JSON.parse('{{ categories_data_json|safe }}' || '[]');
+    
+            console.log('Parsed data:', { salesData, productsData, categoriesData });
+    
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: salesData.map(item => {
+                        const date = new Date(item.period);
+                        return date.toLocaleDateString('en-IN', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    }),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: salesData.map(item => parseFloat(item.total_sales) || 0),
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    let value = context.parsed.y;
+                                    return `${label}: ₹${value.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => '₹' + value.toLocaleString()
+                            }
+                        }
+                    }
+                }
+            });
+    
+            // Products Chart
+            const productsCtx = document.getElementById('productsChart').getContext('2d');
+            productsChart = new Chart(productsCtx, {
+                type: 'bar',
+                data: {
+                    labels: productsData.map(item => 
+                        truncateText(item.product_variant__product__name || 'Unknown', 20)
+                    ),
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: productsData.map(item => parseInt(item.total_sold) || 0),
+                        backgroundColor: '#2ecc71',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Units Sold: ${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+    
+            // Categories Chart
+            const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+            categoriesChart = new Chart(categoriesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoriesData.map(item => 
+                        item.product_variant__product__category__name || 'Unknown'
+                    ),
+                    datasets: [{
+                        data: categoriesData.map(item => parseInt(item.total_sold) || 0),
+                        backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const label = context.label;
+                                    return `${label}: ${value.toLocaleString()} units`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing charts:', error);
+        }
+    }
+    
+    // Helper function to safely truncate text
+    function truncateText(text, maxLength) {
+        if (!text) return 'Unknown';
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+    
+    // Add error handling for the entire script
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            initCharts();
+            console.log('Charts initialized successfully');
+        } catch (error) {
+            console.error('Error in main script:', error);
+        }
+        
+        document.getElementById('date_filter').addEventListener('change', function() {
+            const customDates = document.getElementById('custom-dates');
+            customDates.style.display = this.value === 'custom' ? 'block' : 'none';
+            
+            if (this.value !== 'custom') {
+                document.getElementById('filterForm').submit();
+            }
+        });
+    });</script>
+</body>
+</html>

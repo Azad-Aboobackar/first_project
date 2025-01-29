@@ -1,0 +1,499 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUELEE Thrift Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Header and Navbar Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            height: 80px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .navbar .logo {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .navbar .logo span {
+            font-weight: lighter;
+        }
+
+        .navbar nav ul {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 18px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .navbar nav ul li a {
+            transition: color 0.3s ease;
+        }
+
+        .navbar nav ul li a:hover {
+            color: #666;
+        }
+
+        .navbar .icons {
+            display: flex;
+            gap: 20px;
+            font-size: 24px;
+            align-items: center;
+        }
+
+        .navbar .icons a {
+            color: #000;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar .icons a:hover {
+            color: #666;
+            transform: translateY(-2px);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f4f4f4;
+            border-radius: 25px;
+            padding: 8px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            margin-right: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 18px;
+            padding: 5px 10px;
+            width: 250px;
+            transition: width 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            width: 300px;
+        }
+
+        .search-bar button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #555;
+            transform: translateY(-1px);
+        }
+
+        /* Banner Section */
+        .banners-container {
+            max-width: 1300px;
+            margin: 50px auto;
+            padding: 0 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .banner {
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            display: block;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            height: 600px;
+        }
+
+        .banner:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .banner:hover img {
+            transform: scale(1.08);
+        }
+
+        .banner-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 60px 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            transition: all 0.4s ease;
+        }
+
+        .banner h2 {
+            color: #fff;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s ease;
+            letter-spacing: 1px;
+        }
+
+        .banner:hover .banner-content {
+            padding-bottom: 70px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+        }
+
+        .banner:hover h2 {
+            transform: translateY(-10px);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #f4f4f4;
+            padding: 60px 5% 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h4 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #333;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #666;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-3px);
+            color: #666;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        a {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style the badge */
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff3b30; /* A more vibrant red */
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px; /* Adjust padding for a balanced look */
+    font-size: 14px; /* Slightly larger text */
+    font-weight: bold;
+    text-align: center;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px; /* Vertically center the text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a slight shadow to make it pop */
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+/* Optional: Add a hover effect for better UX */
+a:hover .badge {
+    background-color: #d63429; /* Darker red for hover effect */
+}
+
+/* Ensure the badge is responsive and doesn't overlap excessively */
+@media (max-width: 600px) {
+    .badge {
+        font-size: 12px; /* Smaller font size for mobile */
+        padding: 3px 6px; /* Adjust padding for smaller screens */
+    }
+}
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .banner {
+                height: 500px;
+            }
+
+            .banner h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+            }
+
+            .navbar nav ul {
+                flex-direction: column;
+                gap: 10px;
+                margin: 15px 0;
+                text-align: center;
+            }
+
+            .search-bar {
+                width: 100%;
+                margin: 15px 0;
+            }
+
+            .search-bar input {
+                width: 100%;
+            }
+
+            .banners-container {
+                padding: 0 20px;
+                gap: 30px;
+            }
+
+            .banner {
+                height: 400px;
+            }
+
+            .banner h2 {
+                font-size: 24px;
+            }
+
+            .banner-content {
+                padding: 40px 20px;
+            }
+
+            .footer-section {
+                flex: 100%;
+                text-align: center;
+            }
+
+            .footer-section h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head><body>
+    <!-- Navbar -->
+    <header>
+        <div class="navbar">
+            <a href="{% url 'home' %}" class="logo">LUELEE <span>clothing</span></a>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'shop' %}">Shop</a></li>
+                    <li><a href="{% url 'men' %}">Men</a></li>
+                    <li><a href="{% url 'women' %}">Women</a></li>
+                    <li><a href="{% url 'kid' %}">Kids</a></li>
+                </ul>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="icons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'userprofile' %}">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <a href="{% url 'wishlist' %}">
+                        <i class="fas fa-heart"></i>
+                        {% if wishlist_count > 0 %}
+                            <span class="badge">{{ wishlist_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'cart_page' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if cart_count > 0 %}
+                            <span class="badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'userlogin' %}" class="btn btn-primary">Login</a>
+                    <span>OR</span>
+                    <a href="{% url 'usersignup' %}" class="btn btn-secondary">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Sections -->
+    <main>
+        <section class="banners-container">
+            {% for banner in banners %}
+                <a href="{{ banner.link }}" class="banner">
+                    <img src="{{ banner.image_url }}" alt="{{ banner.title }}">
+                    <div class="banner-content">
+                        <h2>{{ banner.title }}</h2>
+                    </div>
+                </a>
+            {% empty %}
+                <!-- Default banners if no banners are set -->
+                <a href="{% url 'shop' %}" class="banner">
+                    <img src="https://i.pinimg.com/736x/54/9a/54/549a54ab29422b393dcf9e41274c7c64.jpg" alt="Fashion Collection">
+                    <div class="banner-content">
+                        <h2>DRESS LIKE NEVER BEFORE</h2>
+                    </div>
+                </a>
+                <a href="{% url 'women' %}" class="banner">
+                    <img src="https://i.pinimg.com/736x/42/e8/fc/42e8fcc3923d54b52adfd2d84c02f8e3.jpg" alt="Women's Collection">
+                    <div class="banner-content">
+                        <h2>UNLOCK THE POTENTIAL OF FASHION</h2>
+                    </div>
+                </a>
+                <a href="{% url 'kid' %}" class="banner">
+                    <img src="https://i.pinimg.com/736x/34/84/1b/34841b7f673043df61e2c33a69791bc2.jpg" alt="Kids Collection">
+                    <div class="banner-content">
+                        <h2>LET THEM GLOW</h2>
+                    </div>
+                </a>
+            {% endfor %}
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="{% url 'women' %}">Ladies</a></li>
+                    <li><a href="{% url 'men' %}">Men</a></li>
+                    <li><a href="{% url 'kid' %}">Kids</a></li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Help</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping & Delivery</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LUELEE Clothing. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
