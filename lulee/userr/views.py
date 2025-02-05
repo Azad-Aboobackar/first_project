@@ -1678,35 +1678,47 @@ def order_success(request, order_id):
     order = Order.objects.get(id=order_id, user=request.user)
     return render(request, 'order_success.html', {'order': order})
 
-from django.shortcuts import render
+
+
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Order
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.utils import timezone
+from datetime import timedelta, datetime
+from django.shortcuts import render
+from .models import Order  # Ensure Order model is imported
 
 @login_required
 def my_orders(request):
     # Get all orders sorted by date (newest first)
     order_list = Order.objects.filter(user=request.user).order_by('-order_date')
-    
+    current_time = timezone.now()  # This is timezone-aware
+
+    # Annotate orders with a flag for recent orders
+    for order in order_list:
+        order_datetime = datetime.combine(order.order_date, datetime.min.time())  # Convert date to datetime
+        order_datetime = timezone.make_aware(order_datetime, timezone.get_current_timezone())  # Make it timezone-aware
+
+        order.is_within_two_days = (current_time - order_datetime) <= timedelta(days=2)
+
     # Set number of orders per page
     items_per_page = 2
     paginator = Paginator(order_list, items_per_page)
-    
+
     # Get page number from URL parameters
     page = request.GET.get('page', 1)
-    
+
     try:
         orders = paginator.page(page)
     except PageNotAnInteger:
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
-    
+
     context = {
         'orders': orders,
         'total_orders': order_list.count(),
     }
-    
+
     return render(request, 'my_orders.html', context)
 
 @login_required
@@ -2088,9 +2100,20 @@ def remove_coupon(request):
 
 
 
+
 from io import BytesIO
+from decimal import Decimal
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+
+# Register custom font
+pdfmetrics.registerFont(TTFont('DejaVuSans', '/Users/azadaboobackar/Library/Fonts/DejaVuSans.ttf'))
+
 
 def generate_invoice(request, order_id):
     try:
@@ -2099,39 +2122,71 @@ def generate_invoice(request, order_id):
         return HttpResponse("Order not found", status=404)
 
     buffer = BytesIO()
-    p = canvas.Canvas(buffer)
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
 
-    # Header
-    p.setFont("Helvetica-Bold", 14)
-    p.drawString(100, 800, f"Invoice for Order #{order.id}")
-    p.setFont("Helvetica", 12)
-    p.drawString(100, 780, f"Customer: {order.shipping_address.name}")
-    p.drawString(100, 760, f"Address:  {order.shipping_address.city}, {order.shipping_address.state} - {order.shipping_address.pin_code}"),{order.shipping_address.country},
-    p.drawString(100, 740, f"Phone: {order.shipping_address.phone_no}")
-    p.drawString(100, 720, f"Date: {order.order_date}")
+    # Get styles
+    styles = getSampleStyleSheet()
+    title_style = styles["Title"]
+    title_style.fontName = "DejaVuSans"
+    normal_style = styles["Normal"]
+    normal_style.fontName = "DejaVuSans"
 
-    # Items
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(100, 700, "Items:")
-    p.setFont("Helvetica", 10)
-    y = 680
+    # Title
+    title = Paragraph("<b>LUELEE</b>", title_style)
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # Invoice Details
+    invoice_details = f"""
+    <b>Invoice for Order #{order.id}</b><br/>
+    Customer: {order.shipping_address.name}<br/>
+    Address: {order.shipping_address.city}, {order.shipping_address.state} - {order.shipping_address.pin_code}, {order.shipping_address.country}<br/>
+    Phone: {order.shipping_address.phone_no}<br/>
+    Date: {order.order_date}
+    """
+    elements.append(Paragraph(invoice_details, normal_style))
+    elements.append(Spacer(1, 12))
+
+    # Table Data
+    data = [["Product", "Quantity", "Price (₹)", "Total (₹)"]]
     for item in order.order_items.all():
-        p.drawString(100, y, f"{item.product_variant} - {item.quantity} x {item.total_amount:.2f}")
-        y -= 20
-        if y < 100:  # Start a new page if necessary
-            p.showPage()
-            y = 800
+        data.append([
+            str(item.product_variant),
+            str(item.quantity),
+            f"₹{item.total_amount / item.quantity:.2f}",
+            f"₹{item.total_amount:.2f}"
+        ])
 
-    # Total Amount
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(100, y - 20, f"Total: {order.total:.2f}")
+    # Table
+    table = Table(data, colWidths=[250, 80, 100, 100])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+    ]))
 
-    # Finalize and close the PDF
-    p.showPage()
-    p.save()
+    elements.append(table)
+    elements.append(Spacer(1, 12))
 
-    # Return the PDF as a response
+    # Summary
+    subtotal = order.total - Decimal(order.shipping_chrg)
+    summary_data = f"""
+    <b>Subtotal:</b> ₹{subtotal:.2f}<br/>
+    <b>Shipping:</b> ₹{order.shipping_chrg:.2f}<br/>
+    <b>Total:</b> <b>₹{order.total:.2f}</b>
+    """
+    elements.append(Paragraph(summary_data, normal_style))
+
+    # Build the PDF
+    doc.build(elements)
     buffer.seek(0)
+
+    # Prepare and send the response
     response = HttpResponse(buffer, content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="invoice_{order.id}.pdf"'
     return response
@@ -2272,3 +2327,7 @@ def verify_repayment(request, order_id):
         return JsonResponse({'status': 'error', 'message': 'Payment verification failed'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+    
+
+
+

@@ -1063,33 +1063,51 @@ def sales_report(request):
             return export_excel(orders, summary, start_date, end_date)
 
     return render(request, 'admin/dashboard.html', context)
+from io import BytesIO
+import xlsxwriter
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
 
 def export_excel(orders, summary, start_date, end_date):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output)
-    worksheet = workbook.add_worksheet()
+    worksheet = workbook.add_worksheet("Sales Report")
 
-    # Add headers
+    # Define styles
+    header_format = workbook.add_format({'bold': True, 'bg_color': '#4F81BD', 'color': 'white', 'align': 'center'})
+    currency_format = workbook.add_format({'num_format': '₹#,##0.00'})
+    
+    # Add LUELEE brand title
+    worksheet.merge_range('A1:F1', 'LUELEE - Sales Report', workbook.add_format({'bold': True, 'font_size': 14, 'align': 'center'}))
+    
+    # Add report period
+    worksheet.merge_range('A2:F2', f'Period: {start_date} to {end_date}', workbook.add_format({'align': 'center'}))
+
+    # Headers
     headers = ['Order ID', 'Date', 'Customer', 'Items', 'Total Amount', 'Discount']
     for col, header in enumerate(headers):
-        worksheet.write(0, col, header)
+        worksheet.write(3, col, header, header_format)  # Header row at index 3 (row 4 in Excel)
 
     # Add order data
-    for row, order in enumerate(orders, start=1):
+    for row, order in enumerate(orders, start=4):
         worksheet.write(row, 0, order.order_no)
         worksheet.write(row, 1, order.order_date.strftime('%Y-%m-%d'))
         worksheet.write(row, 2, order.user.email)
         worksheet.write(row, 3, order.order_items.count())
-        worksheet.write(row, 4, str(order.total))
-        worksheet.write(row, 5, str(order.calculated_discount))
+        worksheet.write(row, 4, order.total, currency_format)
+        worksheet.write(row, 5, order.calculated_discount, currency_format)
 
-    # Add summary
-    summary_row = len(orders) + 2
-    worksheet.write(summary_row, 0, 'Summary')
+    # Add summary section
+    summary_row = len(orders) + 6
+    worksheet.write(summary_row, 0, 'Summary', workbook.add_format({'bold': True}))
     worksheet.write(summary_row + 1, 0, 'Total Orders')
     worksheet.write(summary_row + 1, 1, summary['total_orders'])
     worksheet.write(summary_row + 2, 0, 'Total Amount')
-    worksheet.write(summary_row + 2, 1, str(summary['total_amount']))
+    worksheet.write(summary_row + 2, 1, summary['total_amount'], currency_format)
 
     workbook.close()
     output.seek(0)
@@ -1098,46 +1116,45 @@ def export_excel(orders, summary, start_date, end_date):
         output.read(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = f'attachment; filename=sales_report_{start_date}_{end_date}.xlsx'
+    response['Content-Disposition'] = f'attachment; filename=LUELEE_Sales_Report_{start_date}_{end_date}.xlsx'
     return response
+
 
 def export_pdf(orders, summary, start_date, end_date):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=sales_report_{start_date}_{end_date}.pdf'
+    response['Content-Disposition'] = f'attachment; filename=LUELEE_Sales_Report_{start_date}_{end_date}.pdf'
 
-    # Create the PDF object using ReportLab
+    # Create PDF
     doc = SimpleDocTemplate(
         response,
         pagesize=landscape(letter),
-        rightMargin=72,
-        leftMargin=72,
-        topMargin=72,
-        bottomMargin=72
+        rightMargin=50,
+        leftMargin=50,
+        topMargin=50,
+        bottomMargin=50
     )
 
-    # Container for the 'Flowable' objects
     elements = []
-    
-    # Add title
     styles = getSampleStyleSheet()
-    title_style = styles['Heading1']
-    elements.append(Paragraph(f'Sales Report ({start_date} to {end_date})', title_style))
+    
+    # Add LUELEE Branding Title
+    title_style = ParagraphStyle('TitleStyle', fontSize=16, alignment=1, spaceAfter=20, textColor=colors.darkblue)
+    elements.append(Paragraph('LUELEE - Sales Report', title_style))
+    
+    # Add report period
+    subtitle_style = ParagraphStyle('SubtitleStyle', fontSize=12, alignment=1, spaceAfter=10)
+    elements.append(Paragraph(f'Period: {start_date} to {end_date}', subtitle_style))
     elements.append(Spacer(1, 20))
 
     # Add summary section
-    summary_style = ParagraphStyle(
-        'CustomStyle',
-        fontSize=12,
-        spaceAfter=20
-    )
-    elements.append(Paragraph(f'Total Orders: {summary["total_orders"]}', summary_style))
-    elements.append(Paragraph(f'Total Amount: ₹{summary["total_amount"]}', summary_style))
-    elements.append(Paragraph(f'Total Items: {summary["total_items"]}', summary_style))
+    summary_style = ParagraphStyle('SummaryStyle', fontSize=12, spaceAfter=10)
+    elements.append(Paragraph(f'<b>Total Orders:</b> {summary["total_orders"]}', summary_style))
+    elements.append(Paragraph(f'<b>Total Amount:</b> ₹{summary["total_amount"]}', summary_style))
+    elements.append(Paragraph(f'<b>Total Items:</b> {summary["total_items"]}', summary_style))
     elements.append(Spacer(1, 20))
 
     # Prepare data for orders table
     data = [['Order No', 'Date', 'Customer', 'Items', 'Total Amount', 'Discount']]
-    
     for order in orders:
         data.append([
             order.order_no,
@@ -1148,10 +1165,10 @@ def export_pdf(orders, summary, start_date, end_date):
             f'₹{order.calculated_discount}'
         ])
 
-    # Create the table
-    table = Table(data)
+    # Create the table with improved formatting
+    table = Table(data, colWidths=[80, 100, 200, 60, 100, 100])
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
@@ -1161,11 +1178,11 @@ def export_pdf(orders, summary, start_date, end_date):
         ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
         ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
     ]))
 
     elements.append(table)
-    
+
     # Build PDF
     doc.build(elements)
     return response

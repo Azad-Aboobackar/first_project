@@ -649,7 +649,7 @@
                             </a>
                         {% endif %}
 
-                        {% if order.status == 'PAYMENT_PENDING' %}
+                        {% if order.status == 'PAYMENT_PENDING' and order.is_within_two_days %}
                         <button onclick="initiateRepayment('{{ order.id }}', '{{ order.total }}')" class="btn btn-view">
                             <i class="fas fa-sync"></i> Repay Now
                         </button>

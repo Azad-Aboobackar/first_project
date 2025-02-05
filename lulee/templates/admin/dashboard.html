@@ -520,6 +520,43 @@
 
 
     <script>
+        // Get today's date in YYYY-MM-DD format
+function getTodayDateString() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Set max attribute for date inputs when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const today = getTodayDateString();
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    
+    // Set max date for both inputs to today
+    startDateInput.max = today;
+    endDateInput.max = today;
+    
+    // When start date changes, update end date min value
+    startDateInput.addEventListener('change', function() {
+        endDateInput.min = this.value;
+        // If end date is less than start date, update it
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+    
+    // When end date changes, update start date max value
+    endDateInput.addEventListener('change', function() {
+        startDateInput.max = this.value;
+        // If start date is greater than end date, update it
+        if (startDateInput.value && startDateInput.value > this.value) {
+            startDateInput.value = this.value;
+        }
+    });
+});
     function initCharts() {
         try {
             // Parse data with error handling
