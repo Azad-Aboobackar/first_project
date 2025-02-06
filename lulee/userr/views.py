@@ -2111,8 +2111,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 
-# Register custom font
-pdfmetrics.registerFont(TTFont('DejaVuSans', '/home/ubuntu/first_project/lulee/fonts/DejaVuSans.ttf'))
+
+pdfmetrics.registerFont(TTFont('Helvetica', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
 
 def generate_invoice(request, order_id):
     try:
