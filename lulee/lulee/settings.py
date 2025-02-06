@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +32,7 @@ SECRET_KEY = 'django-insecure-i8h%f(#47vo$1)f(*n6((5+s@pnx1ye2qdv73_e&$)ou^uz+so
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -123,12 +130,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'static'),
 ]
-
 
 
 # Default primary key field type
@@ -183,9 +190,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+
 
 cloudinary.config(
     cloud_name='dmbj17v75',  # Replace with your Cloudinary cloud name
@@ -197,10 +202,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 
 # Then get the keys using os.environ.get()
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
